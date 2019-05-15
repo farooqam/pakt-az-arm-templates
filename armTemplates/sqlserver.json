@@ -52,7 +52,7 @@
       "resources": [
         {
           "name": "[parameters('sqlDatabaseName')]",
-          "type": "Microsoft.Sql/servers/databases",
+          "type": "databases",
           "location": "[parameters('location')]",
           "tags": {
             "displayName": "Database"
