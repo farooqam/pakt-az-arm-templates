@@ -52,7 +52,7 @@
       "resources": [
         {
           "name": "[parameters('sqlDatabaseName')]",
-          "type": "databases",
+          "type": "Microsoft.Sql/servers/databases",
           "location": "[parameters('location')]",
           "tags": {
             "displayName": "Database"
@@ -91,7 +91,7 @@
     },
     "sqlDatabase": {
       "type": "object",
-      "value": "[resourceId('Microsoft.Sql/servers/databases', parameters('sqlServerName'), parameters('sqlDatabaseName'))]"
+      "value": "[reference(resourceid('Microsoft.SQL/servers/databases', parameters('sqlServerName'), parameters('sqlDatabaseName')),'2015-01-01')]"
     }
   }
 }
