@@ -91,7 +91,9 @@
     },
     "sqlDatabase": {
       "type": "object",
-      "value": "[reference(resourceId('Microsoft.SQL/servers/databases/', parameters('sqlServerName'), parameters('sqlDatabaseName')),'2015-01-01')]"
+      "value": "[resourceId('Microsoft.Sql/servers/databases', parameters('sqlServerName'), parameters('sqlDatabaseName'))]"
     }
   }
 }
+
+           
