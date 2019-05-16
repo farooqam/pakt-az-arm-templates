@@ -8,13 +8,13 @@
         "description": "The name of the SQL Server"
       }
     },
-    "sqlDatabaseName": {
-      "type": "string",
+    "sqlDatabaseNames": {
+      "type": "array",
       "metadata": {
-        "description": "The name of the SQL Server database to create"
+        "description": "The names of the SQL Server database to create"
       }
     },
-    "sqlAdministratorLogin": {
+    "sqlAdministratorLogin": { 
       "type": "string",
       "metadata": {
         "description": "The admin user of the SQL Server"
@@ -51,24 +51,6 @@
       },
       "resources": [
         {
-          "name": "[parameters('sqlDatabaseName')]",
-          "type": "databases",
-          "location": "[parameters('location')]",
-          "tags": {
-            "displayName": "Database"
-          },
-          "apiVersion": "2015-01-01",
-          "dependsOn": [
-            "[parameters('sqlServerName')]"
-          ],
-          "properties": {
-            "edition": "Basic",
-            "collation": "SQL_Latin1_General_CP1_CI_AS",
-            "maxSizeBytes": "1073741824",
-            "requestedServiceObjectiveName": "Basic"
-          }
-        },
-        {
           "type": "firewallrules",
           "apiVersion": "2014-04-01",
           "dependsOn": [
@@ -82,6 +64,29 @@
           }
         }
       ]
+    },
+    {
+      "name": "[concat(parameters('sqlServerName'), '/', parameters('sqlDatabaseNames')[copyIndex()])]",
+      "type": "Microsoft.Sql/servers/databases",
+      "location": "[parameters('location')]",
+      "condition": "[greater(length(parameters('sqlDatabaseNames')), 0)]",
+      "tags": {
+        "displayName": "SqlDatabase"
+      },
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "[concat('Microsoft.Sql/servers/', parameters('sqlServerName'))]"
+      ],
+      "properties": {
+        "edition": "Basic",
+        "collation": "SQL_Latin1_General_CP1_CI_AS",
+        "maxSizeBytes": "1073741824",
+        "requestedServiceObjectiveName": "Basic"
+      },
+      "copy": {
+        "name": "iterator",
+        "count": "[length(parameters('sqlDatabaseNames'))]"
+      }
     }
   ],
   "outputs": {
@@ -89,13 +94,9 @@
       "type": "object",
       "value": "[reference(parameters('sqlServerName'))]"
     },
-    "sqlDatabase": {
-      "type": "object",
-      "value": "[reference(resourceId('Microsoft.SQL/servers/databases', parameters('sqlServerName'), parameters('sqlDatabaseName')))]"
-    },
-    "sqlDatabaseName": {
-      "type": "string",
-      "value": "[parameters('sqlDatabaseName')]"
+    "sqlDatabases": {
+      "type": "array",
+      "value": "[parameters('sqlDatabaseNames')]"
     }
   }
 }
