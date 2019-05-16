@@ -141,16 +141,16 @@
       "value": "[reference('DeployVMResources').outputs.storageAccount.value.primaryEndpoints]"
     },
     "vmVirtualNetwork": {
-      "type": "object",
+      "type": "array",
       "value": "[reference('DeployVMResources').outputs.virtualNetwork.value.addressSpace.addressPrefixes]"
     },
     "vmVirtualNetworkSubnets": {
-      "type": "object",
+      "type": "array",
       "value": "[reference('DeployVMResources').outputs.virtualNetwork.value.subnets]"
     },
     "vmNic": {
-      "type": "object",
-      "value": "[reference('DeployVMResources').outputs.virtualNetwork.value.ipConfigurations]"
+      "type": "array",
+      "value": "[reference('DeployVMResources').outputs.nic.value.ipConfigurations]"
     }
   }
 }
