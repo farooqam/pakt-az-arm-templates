@@ -5,8 +5,23 @@
     "sqlServerName": {
       "value": "farooqsql01"
     },
+    "sqlDatabaseNames": {
+      "value": ["db1"]
+    },
     "vmName": {
       "value": "farooqvm01"
+    },
+    "sqlPasswordSecretName": {
+      "value": "sqlAdminPassword"
+    },
+    "vmPasswordSecretName": {
+      "value": "vmAdminPassword"
+    },
+    "keyVaultResourceGroupName": {
+      "value": "armpatterns-rg"
+    },
+    "keyVaultName": {
+      "value": "keyvaultfarooq01"
     }
   }
 }
