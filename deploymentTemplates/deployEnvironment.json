@@ -8,11 +8,10 @@
         "description": "The name of the SQL Server"
       }
     },
-    "sqlDatabaseName": {
-      "type": "string",
-      "defaultValue": "MyDb",
+    "sqlDatabaseNames": {
+      "type": "array",
       "metadata": {
-        "description": "The name of the SQL Server database to create"
+        "description": "The names of the SQL Server databases to create"
       }
     },
     "sqlAdministratorLogin": {
@@ -22,10 +21,10 @@
         "description": "The admin user of the SQL Server"
       }
     },
-    "sqlAdministratorLoginPassword": {
-      "type": "securestring",
+    "sqlPasswordSecretName": {
+      "type": "string",
       "metadata": {
-        "description": "The password of the admin user of the SQL Server"
+        "description": "The name of the SQL Server password secret stored in key vault"
       }
     },
     "vmName": {
@@ -41,10 +40,22 @@
         "description": "User name for the Virtual Machine."
       }
     },
-    "adminPassword": {
-      "type": "securestring",
+    "vmPasswordSecretName": {
+      "type": "string",
       "metadata": {
-        "description": "Password for the Virtual Machine."
+        "description": "The name of the VM password secret stored in key vault"
+      }
+    },
+    "keyVaultResourceGroupName": {
+      "type": "string",
+      "metadata": {
+        "description": "The resource group containing the key vault that will be used for accessing secrets."
+      }
+    },
+    "keyVaultName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the key vault that will be used for accessing secrets."
       }
     },
     "location": {
@@ -76,14 +87,19 @@
           "sqlServerName": {
             "value": "[parameters('sqlServerName')]"
           },
-          "sqlDatabaseName": {
-            "value": "[parameters('sqlDatabaseName')]"
+          "sqlDatabaseNames": {
+            "value": "[parameters('sqlDatabaseNames')]"
           },
           "sqlAdministratorLogin": {
             "value": "[parameters('sqlAdministratorLogin')]"
           },
           "sqlAdministratorLoginPassword": {
-            "value": "[parameters('sqlAdministratorLoginPassword')]"
+            "reference": {
+              "keyVault": {
+                "id": "[concat(subscription().id,'/resourcegroups/', parameters('keyVaultResourceGroupName'), '/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
+              },
+              "secretName": "[parameters('sqlPasswordSecretName')]"
+            }
           }
         }
       }
@@ -109,7 +125,12 @@
             "value": "[variables('vmAuthenticationType')]"
           },
           "adminPasswordOrKey": {
-            "value": "[parameters('adminPassword')]"
+            "reference": {
+              "keyVault": {
+                "id": "[concat(subscription().id,'/resourcegroups/', parameters('keyVaultResourceGroupName'), '/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
+              },
+              "secretName": "[parameters('vmPasswordSecretName')]"
+            }
           },
           "storageAccountName": {
             "value": "[variables('vmStorageAccountName')]"
@@ -124,9 +145,9 @@
       "type": "string",
       "value": "[reference('DeploySQLResources').outputs.sqlServer.value.fullyQualifiedDomainName]"
     },
-    "sqlDatabaseName": {
-      "type": "string",
-      "value": "[reference('DeploySQLResources').outputs.sqlDatabaseName.value]"
+    "sqlDatabaseNames": {
+      "type": "array",
+      "value": "[parameters('sqlDatabaseNames')]"
     },
     "vmSSHCommand": {
       "type": "string",
